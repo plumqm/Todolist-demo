@@ -1,75 +1,178 @@
-# 待办清单应用
+# Todo List 多端同步项目 🚀
 
-一个极简的跨平台待办清单应用，使用 React 和 Supabase 构建。
+> 英文说明见 `README_EN.md`
 
-## 功能特性
+## 这个项目解决了什么问题 💡
 
-- 添加、删除和勾选任务
-- 双击编辑任务内容
-- 为大任务添加子任务
-- 跨设备实时同步
-- 简洁优雅的 UI 设计，类似苹果备忘录
+很多人会遇到同一个痛点：
 
-## 设置步骤
+- Windows 端能用的待办工具不少
+- iPhone 端也有很多工具
+- 但两端实时互相同步、并且自己可控的数据方案不多
 
-1. 克隆此仓库
-2. 安装依赖：`npm install`
-3. 设置 Supabase：
-   - 在 [supabase.com](https://supabase.com) 创建新项目
-   - 创建名为 `todos` 的表，包含以下列：
-     - `id` (uuid, 主键, 默认值: gen_random_uuid())
-     - `text` (text)
-     - `completed` (boolean, 默认值: false)
-     - `parent_id` (uuid, 可空, 外键指向 id)
-     - `created_at` (timestamp with time zone, 默认值: now())
-     
-     如果表已存在，添加 parent_id 列：
-     ```sql
-     ALTER TABLE todos ADD COLUMN parent_id UUID REFERENCES todos(id);
-     ```
-   - 启用行级安全 (RLS) 并创建 CRUD 操作策略
-   - 将项目 URL 和 anon key 复制到 `.env` 文件
-4. 运行应用：`npm run dev`
+这个项目的目标就是解决这个问题：
 
-## Windows 桌面组件模式
+✅ 同一份任务数据在 Windows、iPhone、网页、微信小程序壳之间同步
 
-1. 开发模式运行桌面组件：`npm run dev:desktop`
-2. 仅启动桌面程序（需先构建前端）：
-   - 构建：`npm run build:web`
-   - 启动：`npm run start:desktop`
-3. 打包为 Windows 安装包（.exe）：`npm run build:desktop`
+✅ 你在一端编辑，另一端几乎实时可见（基于 Supabase Realtime）
 
-桌面模式默认行为：
-- 窗口始终置顶（便签/小组件体验）
-- 开机自动启动
-- 记住窗口大小和位置
-- 数据仍通过 Supabase 实时同步（与网页端互通）
+✅ 可以按需求选择部署方式（Vercel / Cloudflare / 微信小程序 / 本地 EXE）
 
-## 部署
+---
 
-部署到 Vercel：
+## 功能一览 ✨
 
-1. 将代码推送到 GitHub
-2. 在 Vercel 中连接仓库
-3. 在 Vercel 控制台中添加环境变量：
+- 添加、编辑、勾选、删除任务
+- 支持子任务（无限层级）
+- 删除主任务时自动级联删除所有子任务
+- 中文输入法友好（子任务输入不丢焦点）
+- 多端同步（Supabase）
+
+---
+
+## 0. 先决条件（一次配置）
+
+1. 安装 Node.js 18+（建议 20）
+2. 注册 Supabase 并创建项目
+3. 安装依赖
+
+```bash
+npm install
+```
+
+---
+
+## 1. Supabase 配置（必须）
+
+在 Supabase 的 SQL Editor 执行：
+
+```sql
+create table if not exists todos (
+  id uuid primary key default gen_random_uuid(),
+  text text not null,
+  completed boolean default false,
+  parent_id uuid references todos(id),
+  created_at timestamptz default now()
+);
+
+alter publication supabase_realtime add table todos;
+```
+
+在项目根目录创建 `.env`（参考 `.env.example`）：
+
+```dotenv
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
+---
+
+## 2. 只想先跑起来？按这个逻辑走 ✅
+
+### 方案 A：Vercel（最省心）
+
+适合：快速上线、自动部署。
+
+1. 代码推送到 GitHub
+2. Vercel 导入仓库
+3. Build command 填 `npm run build:web`
+4. Output directory 填 `dist`
+5. 配置环境变量：
    - `VITE_SUPABASE_URL`
    - `VITE_SUPABASE_ANON_KEY`
-4. 部署完成
+6. Deploy
 
-其他平台请确保设置了环境变量。
+---
 
-## iPhone 使用（部署后）
+### 方案 B：Cloudflare Pages（部分移动网络更稳）
 
-1. 在 iPhone Safari 打开你的 Vercel 域名
-2. 登录或直接进入待办清单页面
-3. 点击分享按钮，选择“添加到主屏幕”
-4. 从主屏幕启动后将以接近原生应用的方式显示
+适合：Vercel 域名在某些网络不稳定时。
 
-提示：
-- 需要在 Vercel 项目中配置好环境变量（参考 `.env.example`）
-- 电脑端和 iPhone 端会通过 Supabase 实时同步同一份数据
+1. Cloudflare -> Workers & Pages -> Create -> Pages -> Connect to Git
+2. 选择仓库
+3. Build command 填 `npm run build:web`
+4. Build output directory 填 `dist`
+5. 配置同样的两个环境变量
+6. Save and Deploy
 
-## 微信小程序（快速壳）
+---
 
-- 已提供小程序壳目录：`wechat-miniapp`
-- 详细说明见：`wechat-miniapp/README.md`
+### 方案 C：微信小程序（快速壳）
+
+适合：先在微信里可用，不重写业务逻辑。
+
+1. 导入 `wechat-miniapp`
+2. 在 `wechat-miniapp/miniprogram/app.js` 把 `webUrl` 改成你的线上 HTTPS 地址
+3. 微信公众平台配置合法域名/业务域名
+4. 真机预览 -> 上传 -> 提交审核 -> 审核通过后发布
+
+> 注意：小程序 web-view 必须配置域名校验，不然会白屏。
+
+---
+
+### 方案 D：Windows 本地 EXE
+
+适合：做桌面常驻组件。
+
+```bash
+npm run build:desktop
+```
+
+打包产物：`release/win-unpacked/Todo Widget.exe`
+
+开发调试：
+
+```bash
+npm run dev:desktop
+```
+
+---
+
+## 3. iPhone 使用 📱
+
+1. 用 Safari 打开你的线上域名
+2. 测试任务新增/编辑是否正常
+3. 点分享 -> 添加到主屏幕
+
+---
+
+## 4. 自动更新（GitHub 推送后）🔄
+
+如果你的 Vercel / Cloudflare 使用的是 Connect to Git：
+
+```bash
+git add .
+git commit -m "update"
+git push
+```
+
+推送后会自动部署新版本。
+
+---
+
+## 5. 隐私与安全建议 🔐
+
+1. `.env` 不要提交到仓库
+2. 只提交 `.env.example`
+3. 小程序私有配置文件不要入库（`project.private.config.json`）
+4. 若怀疑 key 泄露，去 Supabase 轮换 anon key
+
+---
+
+## 6. 常见问题 🧰
+
+### Q1：电脑能打开，手机打不开
+
+通常是网络链路或 DNS 问题，先换部署域名（如 Vercel <-> Cloudflare）再验证。
+
+### Q2：小程序 web-view 白屏
+
+检查：
+
+1. 业务域名是否已配置
+2. 域名是否 HTTPS
+3. 域名校验文件是否部署成功
+
+### Q3：为什么不同端数据不一致
+
+检查是否都连接同一个 Supabase 项目（URL 和 key 必须一致）。
