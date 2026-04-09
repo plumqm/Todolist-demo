@@ -2,6 +2,26 @@
 
 > Language: [中文](README.md) | [English](README_EN.md)
 
+This guide is for people who want to use this ready-to-run repository directly.
+
+## Screenshots 👀
+
+### Image 1: Web page on Windows
+
+![Windows web view](docs/images/windows-web.png)
+
+### Image 2: WeChat Mini Program DevTools
+
+![WeChat DevTools view](docs/images/wechat-devtools.png)
+
+### Image 3: WeChat Mini Program on phone (debug)
+
+![WeChat mobile debug view](docs/images/wechat-mobile-debug.png)
+
+### Image 4: Safari on iPhone
+
+![iPhone Safari view](docs/images/iphone-safari.png)
+
 ## Quick Navigation 🧭
 
 - [Why this project exists](#why-this-project-exists-)
