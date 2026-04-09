@@ -1,0 +1,18 @@
+{
+  "name": "待办清单",
+  "short_name": "待办",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#007aff",
+  "lang": "zh-CN",
+  "description": "极简跨平台待办清单，支持实时同步",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
