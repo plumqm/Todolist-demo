@@ -5,12 +5,13 @@
 ## Quick Navigation 🧭
 
 - [Why this project exists](#why-this-project-exists-)
-- [Fast path pick one option](#2-fast-path-pick-one-rundeploy-option-)
+- [Beginner one-path setup](#0-beginner-one-path-setup-)
+- [Supabase setup step by step](#1-supabase-setup-step-by-step-)
 - [Option A: Vercel](#option-a-vercel-easiest)
 - [Option B: Cloudflare Pages](#option-b-cloudflare-pages-often-stable-on-mobile-networks)
 - [Option C: WeChat Mini Program](#option-c-wechat-mini-program-web-view-shell)
 - [Option D: Windows local EXE](#option-d-windows-local-exe)
-- [Troubleshooting](#6-troubleshooting-)
+- [Troubleshooting](#5-troubleshooting-)
 
 ## Why this project exists 💡
 
@@ -34,21 +35,51 @@ This project is built to solve exactly that:
 
 ---
 
-## 0. Prerequisites
+## 0. Beginner one-path setup ✅
 
-1. Node.js 18+ (20 recommended)
-2. A Supabase project
+If you are new, just follow this order:
+
+1. Install Node.js
+2. Download this project
 3. Install dependencies
 
 ```bash
 npm install
 ```
 
+4. Do Supabase setup in section 1 (you can register Supabase at this step, not earlier)
+5. Start locally
+
+```bash
+npm run dev
+```
+
+6. Choose one deploy option (Vercel or Cloudflare)
+7. Open deployed URL on iPhone Safari
+8. For WeChat, follow section 4
+
 ---
 
-## 1. Supabase setup (required)
+## Is Node.js 18+ required?
 
-Run in Supabase SQL Editor:
+- Not strictly required in theory.
+- But older versions often cause dependency/build issues.
+- For the smoothest experience, use Node.js 20.
+
+---
+
+## 1. Supabase setup step by step 🧩
+
+Official links:
+
+- Supabase home: https://supabase.com/
+- Supabase dashboard: https://supabase.com/dashboard
+
+Do this in order:
+
+1. Create a Supabase project in dashboard
+2. Open SQL Editor
+3. Run the SQL below
 
 ```sql
 create table if not exists todos (
@@ -62,11 +93,20 @@ create table if not exists todos (
 alter publication supabase_realtime add table todos;
 ```
 
-Create `.env` in project root (see `.env.example`):
+4. Go to Project Settings -> API, copy:
+  - Project URL
+  - anon public key
+5. Create `.env` in project root:
 
 ```dotenv
-VITE_SUPABASE_URL=https://your-project-id.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_SUPABASE_URL=your-project-url
+VITE_SUPABASE_ANON_KEY=your-anon-public-key
+```
+
+6. Verify locally:
+
+```bash
+npm run dev
 ```
 
 ---
@@ -84,6 +124,8 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
    - `VITE_SUPABASE_ANON_KEY`
 6. Deploy
 
+After deploy, open it on iPhone Safari and test sync.
+
 ### Option B: Cloudflare Pages (often stable on mobile networks)
 
 1. Cloudflare -> Workers & Pages -> Create -> Pages -> Connect to Git
@@ -92,6 +134,8 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 4. Build output directory: `dist`
 5. Add the same env vars
 6. Save and Deploy
+
+If Vercel domain is unstable on your mobile network, Cloudflare is often more reachable.
 
 ### Option C: WeChat Mini Program (web-view shell)
 
@@ -142,16 +186,7 @@ Every push triggers a new deployment automatically.
 
 ---
 
-## 5. Privacy and security tips 🔐
-
-1. Never commit `.env`
-2. Commit `.env.example` only
-3. Do not track miniapp private config (`project.private.config.json`)
-4. Rotate Supabase anon key if leakage is suspected
-
----
-
-## 6. Troubleshooting 🧰
+## 5. Troubleshooting 🧰
 
 ### Computer works but phone cannot open
 

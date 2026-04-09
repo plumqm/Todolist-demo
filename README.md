@@ -5,12 +5,13 @@
 ## 快速导航 🧭
 
 - [这个项目解决了什么问题](#这个项目解决了什么问题-)
-- [只想先跑起来按这个逻辑走](#2-只想先跑起来按这个逻辑走-)
+- [小白版一条龙步骤](#0-小白版一条龙步骤-)
+- [Supabase 配置手把手](#1-supabase-配置手把手-)
 - [方案 A：Vercel](#方案-avercel最省心)
 - [方案 B：Cloudflare Pages](#方案-bcloudflare-pages部分移动网络更稳)
 - [方案 C：微信小程序快速壳](#方案-c微信小程序快速壳)
 - [方案 D：Windows 本地 EXE](#方案-dwindows-本地-exe)
-- [常见问题](#6-常见问题-)
+- [常见问题](#5-常见问题-)
 
 ## 这个项目解决了什么问题 💡
 
@@ -40,21 +41,50 @@
 
 ---
 
-## 0. 先决条件（一次配置）
+## 0. 小白版一条龙步骤 ✅
 
-1. 安装 Node.js 18+（建议 20）
-2. 注册 Supabase 并创建项目
+你只要按下面做，就能跑起来：
+
+1. 安装 Node.js（建议 20）
+2. 下载项目代码
 3. 安装依赖
 
 ```bash
 npm install
 ```
 
+4. 按下面第 1 节配置 Supabase（只在这一步注册就行，不用一开始就注册）
+5. 本地启动
+
+```bash
+npm run dev
+```
+
+6. 选一个部署方案（Vercel 或 Cloudflare）
+7. iPhone 用 Safari 打开部署地址
+8. 微信小程序按第 4 节接入 web-view
+
 ---
 
-## 1. Supabase 配置（必须）
+## Node.js 必须 18+ 吗？
 
-在 Supabase 的 SQL Editor 执行：
+- 不是理论上“绝对必须”，但低版本很容易出现依赖兼容问题。
+- 为了保证你和别人照着文档就能成功，建议直接用 Node.js 20（最省事）。
+
+---
+
+## 1. Supabase 配置手把手 🧩
+
+官网入口：
+
+- Supabase 首页：https://supabase.com/
+- 控制台：https://supabase.com/dashboard
+
+按顺序操作：
+
+1. 打开 Supabase 控制台并新建项目
+2. 进入 SQL Editor（左侧菜单）
+3. 执行下面 SQL（创建任务表 + 开启实时同步）
 
 ```sql
 create table if not exists todos (
@@ -68,11 +98,20 @@ create table if not exists todos (
 alter publication supabase_realtime add table todos;
 ```
 
-在项目根目录创建 `.env`（参考 `.env.example`）：
+4. 进入 Project Settings -> API，复制：
+   - Project URL
+   - anon public key
+5. 在项目根目录新建 `.env` 文件，写入：
 
 ```dotenv
-VITE_SUPABASE_URL=https://your-project-id.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_SUPABASE_URL=你的ProjectURL
+VITE_SUPABASE_ANON_KEY=你的AnonPublicKey
+```
+
+6. 启动项目验证：
+
+```bash
+npm run dev
 ```
 
 ---
@@ -92,6 +131,8 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
    - `VITE_SUPABASE_ANON_KEY`
 6. Deploy
 
+部署后你就可以在 iPhone Safari 访问并同步。
+
 ---
 
 ### 方案 B：Cloudflare Pages（部分移动网络更稳）
@@ -104,6 +145,8 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 4. Build output directory 填 `dist`
 5. 配置同样的两个环境变量
 6. Save and Deploy
+
+如果某些移动网络下 Vercel 不稳定，Cloudflare 往往更稳。
 
 ---
 
@@ -160,16 +203,7 @@ git push
 
 ---
 
-## 5. 隐私与安全建议 🔐
-
-1. `.env` 不要提交到仓库
-2. 只提交 `.env.example`
-3. 小程序私有配置文件不要入库（`project.private.config.json`）
-4. 若怀疑 key 泄露，去 Supabase 轮换 anon key
-
----
-
-## 6. 常见问题 🧰
+## 5. 常见问题 🧰
 
 ### Q1：电脑能打开，手机打不开
 
