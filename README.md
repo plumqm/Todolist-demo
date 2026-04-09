@@ -2,7 +2,6 @@
 
 > Language: [中文](README.md) | [English](README_EN.md)
 
-这份文档是给“使用这份现成代码的人”准备的，不是教程型从零开发文档。
 
 ## 效果图展示 👀
 
