@@ -1,6 +1,16 @@
 # Todo List 多端同步项目 🚀
 
-> 英文说明见 `README_EN.md`
+> Language: [中文](README.md) | [English](README_EN.md)
+
+## 快速导航 🧭
+
+- [这个项目解决了什么问题](#这个项目解决了什么问题-)
+- [只想先跑起来按这个逻辑走](#2-只想先跑起来按这个逻辑走-)
+- [方案 A：Vercel](#方案-avercel最省心)
+- [方案 B：Cloudflare Pages](#方案-bcloudflare-pages部分移动网络更稳)
+- [方案 C：微信小程序快速壳](#方案-c微信小程序快速壳)
+- [方案 D：Windows 本地 EXE](#方案-dwindows-本地-exe)
+- [常见问题](#6-常见问题-)
 
 ## 这个项目解决了什么问题 💡
 

@@ -1,5 +1,17 @@
 # Todo List Multi-Device Sync Project 🚀
 
+> Language: [中文](README.md) | [English](README_EN.md)
+
+## Quick Navigation 🧭
+
+- [Why this project exists](#why-this-project-exists-)
+- [Fast path pick one option](#2-fast-path-pick-one-rundeploy-option-)
+- [Option A: Vercel](#option-a-vercel-easiest)
+- [Option B: Cloudflare Pages](#option-b-cloudflare-pages-often-stable-on-mobile-networks)
+- [Option C: WeChat Mini Program](#option-c-wechat-mini-program-web-view-shell)
+- [Option D: Windows local EXE](#option-d-windows-local-exe)
+- [Troubleshooting](#6-troubleshooting-)
+
 ## Why this project exists 💡
 
 Many users can find a todo app on Windows and iPhone separately, but not a simple self-hosted tool that keeps both sides in sync in near real time.
