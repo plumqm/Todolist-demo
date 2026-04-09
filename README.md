@@ -2,7 +2,6 @@
 
 > Language: [中文](README.md) | [English](README_EN.md)
 
-这份文档是给“使用这份现成代码的人”准备的，不是教程型从零开发文档。
 
 ## 效果图展示 👀
 
@@ -24,46 +23,43 @@
 
 ---
 
-## 这个项目能做什么
+## 这个项目能做什么 ✨
 
-- 在同一份数据上实现 Windows + iPhone + 网页同步
-- 支持添加、编辑、勾选、删除、子任务
-- 支持微信小程序壳（web-view 方案）
-- 支持打包本地 Windows `.exe`
+- 🔄 **多端实时同步**：Windows + iPhone + Web 网页端数据无缝同步
+- ✅ **核心任务管理**：支持添加、编辑、勾选、删除及无限层级子任务
+- 📦 **多重形态支持**：内置微信小程序外壳（基于 web-view），并支持打包为 Windows 原生桌面微件 (`.exe`)
+- 🚄 **快速部署**：开箱即用，提供 Vercel / Cloudflare 等一键部署配置
 
 ---
 
-## 5 分钟跑起来（最短路径）
+## 快速开始 🚀
 
-1. 安装 Node.js（建议 20）
-2. 克隆仓库并安装依赖：
+**前置依赖：** 推荐使用 [Node.js 20+](https://nodejs.org/)
 
+1. **克隆项目并安装依赖**
 ```bash
+git clone https://github.com/你的用户名/todolist.git
+cd todolist
 npm install
 ```
 
-3. 配置 Supabase（见下一节）
-4. 本地启动：
-
+2. **配置数据库**（详见 [Supabase 配置](#supabase-配置-🗄️)）
+3. **启动本地开发环境**
 ```bash
 npm run dev
 ```
-
-5. 浏览器打开本地地址，开始使用
+4. 在浏览器中打开本地地址即可开始体验！
 
 ---
 
-## Supabase 配置（照抄即可）
+## Supabase 配置 🗄️
 
-官网链接：
-
-- Supabase 首页：https://supabase.com/
-- Supabase 控制台：https://supabase.com/dashboard
+本项目使用 [Supabase](https://supabase.com/) 作为后端数据库和实时同步服务。
 
 步骤：
 
-1. 在 Supabase 新建项目
-2. 打开 SQL Editor，执行：
+1. 登录 [Supabase 控制台](https://supabase.com/dashboard) 创建一个新项目
+2. 进入项目后，打开左侧导航栏的 **SQL Editor**，执行以下 SQL 语句来初始化数据表：
 
 ```sql
 create table if not exists todos (
@@ -77,17 +73,17 @@ create table if not exists todos (
 alter publication supabase_realtime add table todos;
 ```
 
-3. 在 Project Settings -> API 复制：
-   - Project URL
-   - anon public key
-4. 在项目根目录创建 `.env`：
+3. 进入 **Project Settings -> API**，复制以下两个配置值：
+   - `Project URL`
+   - `anon public key`
+4. 在本项目根目录创建 `.env` 文件，并填入您的配置：
 
 ```dotenv
 VITE_SUPABASE_URL=你的ProjectURL
 VITE_SUPABASE_ANON_KEY=你的AnonPublicKey
 ```
 
-5. 运行：
+5. 重新运行开发服务器：
 
 ```bash
 npm run dev
@@ -95,58 +91,63 @@ npm run dev
 
 ---
 
-## 部署方案（按你需要选一个）
+## 部署指南 ☁️
 
-### 方案 A：Vercel（默认推荐）
+选择最适合您的部署方案。
 
-1. 推送到 GitHub
-2. Vercel 导入仓库
-3. Build command：`npm run build:web`
-4. Output directory：`dist`
-5. 环境变量：
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-6. Deploy
+### 方案 A：部署到 Vercel（推荐）
 
-适合：最快上线。
+1. **Fork** 本仓库到你的 GitHub 帐号
+2. 在你自己的 GitHub 仓库里按需修改（可选）
+3. 登录 Vercel，点击 **Add New Project**，导入你 Fork 后的仓库
+4. 保持默认的构建配置：
+   - Build command：`npm run build:web`
+   - Output directory：`dist`
+5. 在 **Environment Variables** 区域填入前面获取到的两个环境变量：
+   - `VITE_SUPABASE_URL` （如：`https://xxxxxx.supabase.co`）
+   - `VITE_SUPABASE_ANON_KEY` （如：`sb_publishable_xxxxxxxx`）
+6. 点击 **Deploy** 进行部署
 
----
-
-### 方案 B：Cloudflare Pages
-
-1. Cloudflare -> Workers & Pages -> Create -> Pages -> Connect to Git
-2. 选择仓库
-3. Build command：`npm run build:web`
-4. Build output directory：`dist`
-5. 同样配置两个环境变量
-6. Save and Deploy
-
-适合：某些移动网络下可达性更稳。
+> 部署完成后，您可以在任何设备（如 iPhone 的 Safari）打开该域名，即刻体验数据同步！
 
 ---
 
-### 方案 C：微信小程序（用现成壳）
+### 方案 B：部署到 Cloudflare Pages
 
-使用目录：`wechat-miniapp`
+如果 Vercel 在您所处的网络环境下访问不稳定，Cloudflare Pages 是极佳的替代方案，通常具有更好的国内连通性。
 
-1. 微信开发者工具导入 `wechat-miniapp`
-2. 修改 `wechat-miniapp/miniprogram/app.js` 里的 `webUrl` 为你的线上 HTTPS 域名
-3. 在微信公众平台配置合法域名/业务域名
-4. 真机预览 -> 上传 -> 审核 -> 发布
+1. 登录 Cloudflare -> Workers & Pages -> Create -> Pages -> Connect to Git
+2. 选择你 Fork 后的仓库
+3. 配置构建参数：
+   - Build command：`npm run build:web`
+   - Build output directory：`dist`
+4. 同样配置那两个环境变量（`VITE_SUPABASE_URL` 与 `VITE_SUPABASE_ANON_KEY`）
+5. 点击 **Save and Deploy** 部署上线
 
 ---
 
-### 方案 D：Windows 本地 EXE
+### 方案 C：微信小程序客户端 📱
 
-打包：
+请在微信公众平台注册并获取 AppID，随后按照以下步骤配置：
+
+1. **获取代码**：将本项目克隆或下载到本地
+2. **导入项目**：打开「微信开发者工具」，选择本项目根目录下的 `wechat-miniapp` 文件夹进行导入
+3. **配置域名**：将 `wechat-miniapp/miniprogram/app.js` 文件内的 `webUrl` 替换为你实际部署的 HTTPS 网页地址
+4. **添加白名单**：前往微信公众平台后台管理，将你的域名加入“业务域名”
+5. **发布审核**：通过微信开发者工具的「真机预览」确认无误后，上传代码并提交审核即可使用
+
+---
+
+### 方案 D：Windows 桌面微件 💻
+
+一键打包 Windows `.exe` 可执行文件：
 
 ```bash
 npm run build:desktop
 ```
+打包产物位于：`release/win-unpacked/Todo Widget.exe`
 
-产物位置：`release/win-unpacked/Todo Widget.exe`
-
-开发调试：
+如需进入本地开发/调试模式：
 
 ```bash
 npm run dev:desktop
@@ -154,44 +155,42 @@ npm run dev:desktop
 
 ---
 
-## iPhone 使用
+## 移动端使用小技巧 🍎
 
-1. Safari 打开你部署后的 HTTPS 地址
-2. 测试任务编辑是否同步
-3. 分享 -> 添加到主屏幕
+在 iPhone 上：
+1. 使用 Safari 浏览器打开已部署的 HTTPS 服务地址
+2. 点击底部菜单栏的「分享」按钮
+3. 选择 **「添加到主屏幕」**，即可将本 Todo List 作为原生级 PWA 应用使用！
 
 ---
 
-## GitHub 新提交会自动更新吗
+## 持续集成说明 🤖
 
-会（前提：Vercel/Cloudflare 项目是 Connect to Git）。
-
-每次改完执行：
+当使用 Vercel 或 Cloudflare Pages 的 Git 集成部署时，后续的代码更新非常简单：
 
 ```bash
 git add .
-git commit -m "update"
+git commit -m "chore: 自定义更新"
 git push
 ```
-
-平台会自动触发新部署。
+平台监测到 `push` 行为后，将自动拉取并重新构建上线。
 
 ---
 
-## 常见问题
+## 常见问题与解答 ❓
 
-### 1) 电脑能开，手机打不开
+### 1) PC 端访问正常，但手机端无法加载？
 
-通常是网络或 DNS 问题，优先换部署域名（Vercel/Cloudflare 互换测试）。
+通常这是由移动运营商的 DNS 劫持或被墙造成的。
+**解决方案**：推荐更换部署平台（例如：若 Vercel 被墙，尝试改用 Cloudflare Pages）或绑定自定义域名。
 
-### 2) 微信小程序 web-view 白屏
+### 2) 微信小程序 web-view 呈现白屏？
 
-重点检查：
+请逐一排查以下几个可能原因：
+1. 目标地址必须是 `https://` 协议
+2. 是否在微信公众平台后台配置了「业务域名」
+3. 平台要求下载及放置的域名校验文件（`.txt`）是否已正确放于该部署环境的根目录（静态资源）并能够正常访问。
 
-1. 业务域名是否配置
-2. 是否 HTTPS
-3. 域名校验文件是否部署成功
+### 3) 多端数据未同步或不一致？
 
-### 3) 多端数据不一致
-
-检查是否都连接同一个 Supabase 项目（URL 和 key 要一致）。
+**解决方案**：请检查各个端的环境变量配置，以确保使用的项目 `URL` 与 `anon public key` 指向了同一个 Supabase 实例。

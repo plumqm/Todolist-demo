@@ -1,8 +1,8 @@
-# Todo List Multi-Device Sync Project 🚀
+﻿# Todo List Multi-Device Sync Project 🚀
 
 > Language: [中文](README.md) | [English](README_EN.md)
 
-This guide is for people who want to use this ready-to-run repository directly.
+Welcome to the **Todo List Multi-Device Sync** project! This repository provides a ready-to-use, cross-platform task management application with real-time sync capabilities out of the box.
 
 ## Screenshots 👀
 
@@ -22,86 +22,47 @@ This guide is for people who want to use this ready-to-run repository directly.
 
 ![iPhone Safari view](docs/images/iphone-safari.png)
 
-## Quick Navigation 🧭
-
-- [Why this project exists](#why-this-project-exists-)
-- [Beginner one-path setup](#0-beginner-one-path-setup-)
-- [Supabase setup step by step](#1-supabase-setup-step-by-step-)
-- [Option A: Vercel](#option-a-vercel-easiest)
-- [Option B: Cloudflare Pages](#option-b-cloudflare-pages-often-stable-on-mobile-networks)
-- [Option C: WeChat Mini Program](#option-c-wechat-mini-program-web-view-shell)
-- [Option D: Windows local EXE](#option-d-windows-local-exe)
-- [Troubleshooting](#5-troubleshooting-)
-
-## Why this project exists 💡
-
-Many users can find a todo app on Windows and iPhone separately, but not a simple self-hosted tool that keeps both sides in sync in near real time.
-
-This project is built to solve exactly that:
-
-- Keep one shared task data source across Windows, iPhone, Web, and WeChat miniapp shell
-- Update on one side and see it on the other side almost immediately (Supabase Realtime)
-- Choose the deployment path that works best for your network and workflow
-
 ---
 
 ## Features ✨
 
-- Add, edit, check, delete tasks
-- Nested subtasks (unlimited levels)
-- Cascading delete for subtasks when deleting a parent task
-- Chinese IME-friendly input behavior
-- Real-time sync via Supabase
+- 🔄 **Real-Time Sync**: Seamlessly synchronize data across Windows, iPhone, and Web instantly.
+- ✅ **Core Task Management**: Supports adding, editing, checking, deleting tasks, and unlimited nested subtasks.
+- 📦 **Multi-format Support**: Built-in WeChat Mini Program shell (web-view based), plus packaged .exe for a Windows native desktop widget.
+- 🚄 **Rapid Deployment**: Out-of-the-box configuration for one-click deployments on platforms like Vercel and Cloudflare Pages.
 
 ---
 
-## 0. Beginner one-path setup ✅
+## Quick Start 🚀
 
-If you are new, just follow this order:
+**Prerequisites:** [Node.js 20+](https://nodejs.org/) is recommended.
 
-1. Install Node.js
-2. Download this project
-3. Install dependencies
-
-```bash
+1. **Clone the repository and install dependencies**
+``bash
+git clone https://github.com/your-username/todolist.git
+cd todolist
 npm install
-```
+``
 
-4. Do Supabase setup in section 1 (you can register Supabase at this step, not earlier)
-5. Start locally
-
-```bash
+2. **Configure Database** (See [Supabase Setup](#supabase-setup-🗄️))
+3. **Start the local development server**
+``bash
 npm run dev
-```
-
-6. Choose one deploy option (Vercel or Cloudflare)
-7. Open deployed URL on iPhone Safari
-8. For WeChat, follow section 4
+``
+4. Open the displayed local URL in your browser and enjoy!
 
 ---
 
-## Is Node.js 18+ required?
+## Supabase Setup 🗄️
 
-- Not strictly required in theory.
-- But older versions often cause dependency/build issues.
-- For the smoothest experience, use Node.js 20.
+This project uses [Supabase](https://supabase.com/) as the backend database and real-time sync service.
 
----
+Steps:
 
-## 1. Supabase setup step by step 🧩
+1. Log in to the [Supabase Dashboard](https://supabase.com/dashboard) and create a new project.
+2. In your project, navigate to the **SQL Editor** on the left menu and execute the following SQL to initialize the tables:
 
-Official links:
-
-- Supabase home: https://supabase.com/
-- Supabase dashboard: https://supabase.com/dashboard
-
-Do this in order:
-
-1. Create a Supabase project in dashboard
-2. Open SQL Editor
-3. Run the SQL below
-
-```sql
+``sql
 create table if not exists todos (
   id uuid primary key default gen_random_uuid(),
   text text not null,
@@ -111,115 +72,128 @@ create table if not exists todos (
 );
 
 alter publication supabase_realtime add table todos;
-```
+``
 
-4. Go to Project Settings -> API, copy:
-  - Project URL
-  - anon public key
-5. Create `.env` in project root:
+3. Go to **Project Settings -> API** and copy these two configuration values:
+   - Project URL
+   - non public key
+4. Create a .env file in the root directory of this project and fill in your configuration:
 
-```dotenv
-VITE_SUPABASE_URL=your-project-url
-VITE_SUPABASE_ANON_KEY=your-anon-public-key
-```
+``dotenv
+VITE_SUPABASE_URL=YourProjectURL
+VITE_SUPABASE_ANON_KEY=YourAnonPublicKey
+``
 
-6. Verify locally:
+5. Restart the development server:
 
-```bash
+``bash
 npm run dev
-```
+``
 
 ---
 
-## 2. Fast path: pick one run/deploy option ✅
+## Deployment Guides ☁️
 
-### Option A: Vercel (easiest)
+Choose the deployment path that works best for you.
 
-1. Push code to GitHub
-2. Import repo in Vercel
-3. Build command: `npm run build:web`
-4. Output directory: `dist`
-5. Add env vars:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-6. Deploy
+### Option A: Deploy to Vercel (Recommended)
 
-After deploy, open it on iPhone Safari and test sync.
+1. **Fork** this repository to your GitHub account.
+2. Modify the code in your own repository if needed (optional).
+3. Log in to Vercel, click **Add New Project**, and import your forked repository.
+4. Keep the default build configurations:
+   - Build command: 
+pm run build:web
+   - Output directory: dist
+5. In the **Environment Variables** section, enter the two variables you obtained earlier:
+   - VITE_SUPABASE_URL (e.g., https://xxxxxx.supabase.co)
+   - VITE_SUPABASE_ANON_KEY (e.g., sb_publishable_xxxxxxxx)
+6. Click **Deploy**.
 
-### Option B: Cloudflare Pages (often stable on mobile networks)
+> Once deployed, you can open the domain on any device (such as Safari on an iPhone) to instantly experience real-time sync!
 
-1. Cloudflare -> Workers & Pages -> Create -> Pages -> Connect to Git
-2. Select repo
-3. Build command: `npm run build:web`
-4. Build output directory: `dist`
-5. Add the same env vars
-6. Save and Deploy
+---
 
-If Vercel domain is unstable on your mobile network, Cloudflare is often more reachable.
+### Option B: Deploy to Cloudflare Pages
 
-### Option C: WeChat Mini Program (web-view shell)
+If Vercel access is unstable in your network environment, Cloudflare Pages is an excellent alternative, often providing better connectivity in certain regions.
 
-1. Import `wechat-miniapp`
-2. Update `webUrl` in `wechat-miniapp/miniprogram/app.js`
-3. Configure legal/business domains in WeChat Official Platform
-4. Preview on device -> Upload -> Submit for review -> Publish
+1. Log in to Cloudflare -> Workers & Pages -> Create -> Pages -> Connect to Git.
+2. Select your forked repository.
+3. Configure the build parameters:
+   - Build command: 
+pm run build:web
+   - Build output directory: dist
+4. Similarly, configure the two environment variables (VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY).
+5. Click **Save and Deploy** to publish.
 
-### Option D: Windows local EXE
+---
 
-Build executable:
+### Option C: WeChat Mini Program Client 📱
 
-```bash
+Please register and obtain an AppID from the WeChat Official Platform, then follow these setup steps:
+
+1. **Get the Code**: Clone or download this project to your local machine.
+2. **Import Project**: Open "WeChat DevTools" and select the wechat-miniapp folder located in the project's root directory to import.
+3. **Configure Domain**: Replace the webUrl variable in the wechat-miniapp/miniprogram/app.js file with your actual deployed HTTPS web address.
+4. **Add to Whitelist**: Go to the WeChat Official Platform admin console and add your domain to the "Business Domain" (业务域名).
+5. **Publish & Review**: Confirm everything works via "Preview" on a real device in WeChat DevTools. Then upload the code and submit it for review to start using.
+
+---
+
+### Option D: Windows Desktop Widget 💻
+
+One-click packaging into a Windows .exe executable:
+
+``bash
 npm run build:desktop
-```
+``
+The build artifact will be located at: elease/win-unpacked/Todo Widget.exe
 
-Output:
+To run in local development/debug mode:
 
-`release/win-unpacked/Todo Widget.exe`
-
-Desktop dev mode:
-
-```bash
+``bash
 npm run dev:desktop
-```
+``
 
 ---
 
-## 3. iPhone usage 📱
+## Mobile Tips & Tricks 🍎
 
-1. Open your deployed HTTPS URL in Safari
-2. Verify task operations
-3. Share -> Add to Home Screen
+On an iPhone:
+1. Open your deployed HTTPS service address using the Safari browser.
+2. Tap the **Share** button located in the bottom menu bar.
+3. Select **"Add to Home Screen"**. This gives the Todo List a native app feel as a PWA!
 
 ---
 
-## 4. Auto deployment from GitHub 🔄
+## Continuous Integration 🤖
 
-If your Vercel/Cloudflare project is connected to Git:
+When using Git-integrated deployments on Vercel or Cloudflare Pages, updating your deployed code is incredibly simple:
 
-```bash
+``bash
 git add .
-git commit -m "update"
+git commit -m "chore: custom update"
 git push
-```
-
-Every push triggers a new deployment automatically.
+``
+Once the platform detects the push event, it will automatically pull the code, rebuild, and deploy it live.
 
 ---
 
-## 5. Troubleshooting 🧰
+## Troubleshooting FAQ ❓
 
-### Computer works but phone cannot open
+### 1) Accessible on PC, but fails to load on a mobile device?
 
-Usually network routing/DNS issues. Try another deployment domain (Vercel vs Cloudflare).
+This is typically caused by DNS manipulation or network blocking by mobile carriers.
+**Solution**: We recommend changing your deployment platform (e.g., if Vercel is blocked, try using Cloudflare Pages) or bind a custom domain that you own.
 
-### WeChat web-view shows blank page
+### 2) The WeChat Mini Program web-view shows a blank screen?
 
-Check:
+Please check the following possible causes one by one:
+1. The target URL must use the https:// protocol.
+2. Have you configured the "Business Domain" in the WeChat Official Platform admin backend?
+3. Has the domain validation file (.txt) required by the platform been correctly downloaded and placed in the root directory of your deployment environment (as a static resource), and is it accessible?
 
-1. Business domain configured
-2. HTTPS is valid
-3. Domain verification file deployed correctly
+### 3) Data isn't syncing or is inconsistent across multiple devices?
 
-### Data is not synced across devices
-
-Ensure all clients point to the same Supabase project URL and anon key.
+**Solution**: Please check the environment variables configuration on each client. Ensure that the project URL and non public key being used point to the identical Supabase instance.
