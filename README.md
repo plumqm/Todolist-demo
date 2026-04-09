@@ -9,17 +9,19 @@
 
 ![Windows 网页端效果](docs/images/windows-web.png)
 
-### 图 2：微信小程序开发平台截图
+### 图 2：Safari 浏览器上效果
+
+![iPhone Safari 浏览器效果](docs/images/iphone-safari.png)
+
+### 图 3：微信小程序开发平台截图
 
 ![微信开发者工具界面](docs/images/wechat-devtools.png)
 
-### 图 3：手机上调试微信小程序界面
+### 图 4：手机上调试微信小程序界面
 
 ![手机端微信小程序调试界面](docs/images/wechat-mobile-debug.png)
 
-### 图 4：Safari 浏览器上效果
 
-![iPhone Safari 浏览器效果](docs/images/iphone-safari.png)
 
 ---
 
