@@ -1,0 +1,8 @@
+<view class="page">
+  <web-view wx:if="{{webUrl}}" src="{{webUrl}}"></web-view>
+
+  <view wx:else class="empty">
+    <view class="title">未配置访问地址</view>
+    <view class="desc">请在 app.js 的 globalData.webUrl 中填写 HTTPS 地址</view>
+  </view>
+</view>

@@ -68,3 +68,8 @@
 提示：
 - 需要在 Vercel 项目中配置好环境变量（参考 `.env.example`）
 - 电脑端和 iPhone 端会通过 Supabase 实时同步同一份数据
+
+## 微信小程序（快速壳）
+
+- 已提供小程序壳目录：`wechat-miniapp`
+- 详细说明见：`wechat-miniapp/README.md`
