@@ -23,3 +23,6 @@ Thumbs.db
 # editor
 .vscode/*
 !.vscode/tasks.json
+
+# wechat devtool private settings
+wechat-miniapp/miniprogram/project.private.config.json
