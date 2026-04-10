@@ -1,4 +1,10 @@
-import { Fragment, useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import {
+    Fragment,
+    useEffect,
+    useRef,
+    useState,
+    type KeyboardEvent,
+} from 'react'
 import { createClient } from '@supabase/supabase-js'
 import './App.css'
 
@@ -17,12 +23,66 @@ interface Todo {
 
 function App() {
     const [todos, setTodos] = useState<Todo[]>([])
+    const [images, setImages] = useState<string[]>([])
+    const [previewImage, setPreviewImage] = useState<string | null>(null)
     const [newTodo, setNewTodo] = useState('')
     const [editingId, setEditingId] = useState<string | null>(null)
     const [editingText, setEditingText] = useState('')
     const [addingSubtaskFor, setAddingSubtaskFor] = useState<string | null>(null)
     const [newSubtask, setNewSubtask] = useState('')
     const subtaskInputRef = useRef<HTMLInputElement>(null)
+    const pasteCaptureRef = useRef<HTMLTextAreaElement>(null)
+
+    const appendImageBlob = (blob: Blob) => {
+        const reader = new FileReader()
+        reader.onload = (event) => {
+            const result = event.target?.result
+            if (typeof result === 'string') {
+                setImages((prev) => {
+                    const next = [...prev, result]
+                    return next
+                })
+            }
+        }
+        reader.readAsDataURL(blob)
+    }
+
+    const appendImageFile = (file: File) => {
+        appendImageBlob(file)
+    }
+
+    const handleClipboardFiles = (clipboardData: DataTransfer | null): boolean => {
+        if (!clipboardData) {
+            return false
+        }
+
+        let foundImage = false
+
+        if (clipboardData.items?.length) {
+            for (let i = 0; i < clipboardData.items.length; i++) {
+                const item = clipboardData.items[i]
+                if (item.type.startsWith('image/')) {
+                    const file = item.getAsFile()
+                    if (file) {
+                        appendImageFile(file)
+                        foundImage = true
+                    }
+                }
+            }
+        }
+
+        if (!foundImage && clipboardData.files?.length) {
+            for (let i = 0; i < clipboardData.files.length; i++) {
+                const file = clipboardData.files[i]
+                if (file.type.startsWith('image/')) {
+                    appendImageFile(file)
+                    foundImage = true
+                }
+            }
+        }
+
+        return foundImage
+    }
 
     useEffect(() => {
         if (addingSubtaskFor && subtaskInputRef.current) {
@@ -34,6 +94,23 @@ function App() {
     }, [addingSubtaskFor])
 
     useEffect(() => {
+        if (!previewImage) {
+            return
+        }
+
+        const handleEsc = (event: globalThis.KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setPreviewImage(null)
+            }
+        }
+
+        window.addEventListener('keydown', handleEsc)
+        return () => {
+            window.removeEventListener('keydown', handleEsc)
+        }
+    }, [previewImage])
+
+    useEffect(() => {
         fetchTodos()
         const channel = supabase
             .channel('todos')
@@ -41,8 +118,45 @@ function App() {
                 fetchTodos()
             })
             .subscribe()
+
+        const handleGlobalPaste = (event: ClipboardEvent) => {
+            if (event.defaultPrevented) {
+                return
+            }
+
+            const hasImage = handleClipboardFiles(event.clipboardData)
+            if (hasImage) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+        }
+
+        const isTextInputTarget = (target: EventTarget | null) => {
+            if (!(target instanceof HTMLElement)) {
+                return false
+            }
+            const tagName = target.tagName.toLowerCase()
+            return tagName === 'input' || tagName === 'textarea' || target.isContentEditable
+        }
+
+        const handleGlobalKeydown = (event: globalThis.KeyboardEvent) => {
+            const isPasteShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'v'
+            if (!isPasteShortcut) {
+                return
+            }
+
+            if (!isTextInputTarget(event.target)) {
+                pasteCaptureRef.current?.focus()
+            }
+        }
+
+        document.addEventListener('paste', handleGlobalPaste, true)
+        document.addEventListener('keydown', handleGlobalKeydown)
+
         return () => {
             supabase.removeChannel(channel)
+            document.removeEventListener('paste', handleGlobalPaste, true)
+            document.removeEventListener('keydown', handleGlobalKeydown)
         }
     }, [])
 
@@ -241,11 +355,41 @@ function App() {
                 />
                 <button onClick={() => addTodo()}>添加</button>
             </div>
+            <textarea
+                ref={pasteCaptureRef}
+                className="paste-capture-input"
+                aria-label="图片粘贴输入框"
+            />
+            {images.length > 0 && (
+                <div className="pasted-images">
+                    {images.map((img, idx) => (
+                        <div key={idx} className="image-wrapper" onClick={() => setPreviewImage(img)}>
+                            <img src={img} alt={`Pasted ${idx}`} />
+                            <button
+                                onClick={(event) => {
+                                    event.stopPropagation()
+                                    setImages((prev) => prev.filter((_, i) => i !== idx))
+                                }}
+                            >
+                                删除
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            )}
             <ul className="todo-list">
                 {todos.map((todo) => (
                     <Fragment key={todo.id}>{renderTodoItem(todo)}</Fragment>
                 ))}
             </ul>
+            {previewImage && (
+                <div className="image-preview-overlay" onClick={() => setPreviewImage(null)}>
+                    <div className="image-preview-dialog" onClick={(event) => event.stopPropagation()}>
+                        <button className="image-preview-close" onClick={() => setPreviewImage(null)}>关闭</button>
+                        <img className="image-preview-img" src={previewImage} alt="预览大图" />
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
